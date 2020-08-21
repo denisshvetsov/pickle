@@ -76,6 +76,9 @@ internal final class PhotoGalleryViewController: UIViewController,
     private var sessionHandler: CameraSessionHandler?
     private let album: PHAssetCollection
     private let configuration: ImagePickerConfigurable?
+    internal var isCameraEnabled: Bool {
+        return isCameraCompatible && (configuration?.isCameraViewEnabled ?? true)
+    }
     internal private(set) lazy var isCameraCompatible: Bool = self.album.isCameraCompatible
 
     internal private(set) lazy var fetchResult: PHFetchResult<PHAsset> = {
@@ -106,6 +109,7 @@ internal final class PhotoGalleryViewController: UIViewController,
         }
 
         let emptyView = PhotoGalleryCameraIconView()
+        emptyView.configure(with: configuration)
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(launchCamera(withTapGesture:)))
         emptyView.addGestureRecognizer(tapRecognizer)
         _emptyView = emptyView
@@ -164,25 +168,27 @@ internal final class PhotoGalleryViewController: UIViewController,
     // MARK: - UICollectionViewDataSource
 
     internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isCameraCompatible ? fetchResult.count + 1 : fetchResult.count
+        return isCameraEnabled ? fetchResult.count + 1 : fetchResult.count
     }
 
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isCameraCompatible && indexPath.row == 0 {
+        if isCameraEnabled && indexPath.row == 0 {
             if sessionHandler?.hasPermssion == .some(true) {
                 let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: String(describing: PhotoGalleryLiveViewCell.self),
                     for: indexPath
                 )
+                (cell as? PhotoGalleryLiveViewCell)?.configure(with: configuration)
                 sessionHandler?.previewView = (cell as? PhotoGalleryLiveViewCell)?.previewView
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: PhotoGalleryCameraCell.self), for: indexPath)
+                (cell as? PhotoGalleryCameraCell)?.configure(with: configuration)
                 return cell
             }
         }
 
-        let index = isCameraCompatible ? indexPath.row - 1 : indexPath.row
+        let index = isCameraEnabled ? indexPath.row - 1 : indexPath.row
         let asset = fetchResult[index]
 
         let text = delegate?.photoGalleryViewController(self, taggedTextForPhoto: asset)
@@ -207,12 +213,12 @@ internal final class PhotoGalleryViewController: UIViewController,
     // MARK: - UICollectionViewDelegate
 
     private func shouldToggleTaggedItem(at indexPath: IndexPath) -> Bool {
-        if isCameraCompatible && indexPath.row == 0 {
+        if isCameraEnabled && indexPath.row == 0 {
             delegate?.photoGalleryViewControllerDidSelectCameraButton(self)
             return false
         }
 
-        let index = isCameraCompatible ? indexPath.row - 1 : indexPath.row
+        let index = isCameraEnabled ? indexPath.row - 1 : indexPath.row
         return delegate?.photoGalleryViewController(self, shouldTogglePhoto: fetchResult[index]) ?? false
     }
 
@@ -233,7 +239,7 @@ internal final class PhotoGalleryViewController: UIViewController,
     }
 
     private func toggle(itemAt indexPath: IndexPath, in collectionView: UICollectionView) {
-        let index = isCameraCompatible ? indexPath.row - 1 : indexPath.row
+        let index = isCameraEnabled ? indexPath.row - 1 : indexPath.row
         delegate?.photoGalleryViewController(self, didTogglePhoto: fetchResult[index])
 
         var indexPaths = Set(collectionView.indexPathsForSelectedItems ?? [])
@@ -294,7 +300,7 @@ internal final class PhotoGalleryViewController: UIViewController,
     }
 
     private func showEmptyViewIfNeeded() {
-        if isCameraCompatible && fetchResult.count == 0 {
+        if isCameraEnabled && fetchResult.count == 0 {
             if collectionView.frame == .zero {
                 view.layoutIfNeeded()
             }

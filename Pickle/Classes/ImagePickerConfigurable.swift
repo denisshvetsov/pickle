@@ -80,6 +80,15 @@ public protocol ImagePickerConfigurable {
 
     /// Specifies whether the camera button shows a live preview.
     var isLiveCameraViewEnabled: Bool? { get }
+    
+    /// Specifies whether the photo gallery should show a camera view cell. If `nil` camera view is enabled
+    var isCameraViewEnabled: Bool? { get }
+    
+    /// The custom text on live camera view
+    var liveCameraViewText: String? { get }
+    
+    /// The custom text on camera view
+    var cameraViewText: String? { get }
 
     // MARK: - Media Types
 

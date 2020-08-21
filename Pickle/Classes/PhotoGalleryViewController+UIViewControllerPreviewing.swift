@@ -20,11 +20,11 @@ extension PhotoGalleryViewController: UIViewControllerPreviewingDelegate {
             return nil
         }
 
-        if isCameraCompatible && indexPath.row == 0 {
+        if isCameraEnabled && indexPath.row == 0 {
             return nil
         }
 
-        let index = isCameraCompatible ? indexPath.row - 1 : indexPath.row
+        let index = isCameraEnabled ? indexPath.row - 1 : indexPath.row
         let asset = fetchResult[index]
         let detailViewController = PhotoDetailViewController(asset: asset)
 

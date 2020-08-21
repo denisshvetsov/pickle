@@ -34,6 +34,12 @@ internal final class PhotoGalleryCameraIconView: UIView {
         label.textColor = UIColor.Palette.grey
         return label
     }()
+    
+    internal func configure(with configuration: ImagePickerConfigurable?) {
+        if let text = configuration?.cameraViewText {
+            textLabel.text = text
+        }
+    }
 
     private func setUpSubviews() {
         backgroundColor = UIColor.white

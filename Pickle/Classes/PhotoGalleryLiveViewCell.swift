@@ -33,6 +33,12 @@ final class PhotoGalleryLiveViewCell: UICollectionViewCell {
         super.init(frame: frame)
         setupViews()
     }
+    
+    internal func configure(with configuration: ImagePickerConfigurable?) {
+        if let text = configuration?.liveCameraViewText {
+            textLabel.text = text
+        }
+    }
 
     private func setupViews() {
         isAccessibilityElement = true

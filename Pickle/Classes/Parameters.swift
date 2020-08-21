@@ -83,7 +83,16 @@ public struct Parameters: ImagePickerConfigurable {
 
     /// Specifies whether the camera button shows a live preview.
     public var isLiveCameraViewEnabled: Bool?
-
+    
+    /// Specifies whether the photo gallery should show a camera view cell. If `nil` camera view is enabled
+    public var isCameraViewEnabled: Bool?
+    
+    /// The custom text on live camera view
+    public var liveCameraViewText: String?
+    
+    /// The custom text on camera view
+    public var cameraViewText: String?
+    
     // MARK: - Media Types
 
     /// Specifies the supported media types

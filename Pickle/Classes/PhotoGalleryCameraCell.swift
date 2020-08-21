@@ -22,7 +22,11 @@ internal final class PhotoGalleryCameraCell: UICollectionViewCell {
         setUpSubviews()
     }
 
-    private lazy var cameraIconView: UIView = PhotoGalleryCameraIconView()
+    private lazy var cameraIconView = PhotoGalleryCameraIconView()
+    
+    internal func configure(with configuration: ImagePickerConfigurable?) {
+        cameraIconView.configure(with: configuration)
+    }
 
     private func setUpSubviews() {
         contentView.backgroundColor = UIColor.white
